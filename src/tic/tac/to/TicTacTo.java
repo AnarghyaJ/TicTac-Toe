@@ -36,7 +36,7 @@ public class TicTacTo extends JFrame{
     }
     
     public  TicTacTo(){
-     frame=new JFrame("Play with Me!");
+     frame=new JFrame("Play Tic Tac Toe!");
    // frame.setLayout(null);
    frame.setAlwaysOnTop(true);
    String bestMove = "";
@@ -59,35 +59,33 @@ public class TicTacTo extends JFrame{
     
     }
     else {
-         bestMove=decisionTree(globalDepth," ",-100000,100000,1,1);
+         bestMove=decisionTree(globalDepth,"",0,0,1,1-player);
         System.err.println(bestMove);
-         board[(bestMove.charAt(0)-48)/3][(bestMove.charAt(0)-48)%3]='O';frame.repaint();
+        board[(bestMove.charAt(0)-48)/3][(bestMove.charAt(0)-48)%3]='O';PaintPane.display();frame.repaint();
          enableClick=true;
     
     }}
-    public static String decisionTree(int depth,String move,int alpha,int beta,int node,int player ){
+    public static String decisionTree(int depth,String move,int alpha,int beta,int node,int player){
     
      int value;
      int possibilities=0;
      String moves="";
-     if(depth==0){return move+evaluateBoard();}
+     if(depth==0){return move+Integer.toString(checkStatus());}
      char c=player==0?'O':'X';
      for(int i=0;i<9;i++){
         if(board[i/3][i%3]==' '){
             possibilities++;
-            moves+=i;
+            moves+=Integer.toString(i);
             }
  }
      
         
-     node=1-node;
-     player=1-player;
+    
      for(int i=0;i<moves.length();i++)
      {
      board[(moves.charAt(i)-48)/3][(moves.charAt(i)-48)%3]=c;
        
-     String returnString=decisionTree(depth-1, moves.substring(i,i+1), alpha, beta, node, player);
-     
+     String returnString=decisionTree(depth-1, moves.substring(i,i+1), alpha, beta, 1-node, 1-player);
     value=Integer.valueOf(returnString.substring(1));
     board[(moves.charAt(i)-48)/3][(moves.charAt(i)-48)%3]=' ';
     if (node==0) {
@@ -102,75 +100,42 @@ public class TicTacTo extends JFrame{
                 if (node==0) {return move+beta;}  return move+alpha;
             }
      }
+     
     if (node==0) {return move+beta;}return move+alpha;
     }
    
-   
-  public static int evaluateBoard(){
-    int computer=1-player;
-   
-    char c=computer==0?'O':'X';
-    char d=player==0?'O':'X';
-    int Ovalue=0,Xvalue=0;
-    for(int i=0;i<9;i++){
-    switch(board[i/3][i%3]){
+   public static int checkStatus(){
+   char c=player==0?'O':'X';
+   char d=c=='O'?'X':'O';
+   if(board[0][0]==c&&board[0][1]==c&&board[0][2]==c)return -10000;
+    if(board[1][0]==c&&board[1][1]==c&&board[1][2]==c)return -10000;
+     if(board[2][0]==c&&board[2][1]==c&&board[2][2]==c)return -10000;
+      if(board[0][0]==c&&board[1][0]==c&&board[2][0]==c)return -10000;
+      if(board[0][1]==c&&board[1][1]==c&&board[2][1]==c)return -10000;
+      if(board[0][2]==c&&board[1][2]==c&&board[2][2]==c)return -10000;
+      if(board[0][0]==c&&board[1][1]==c&&board[2][2]==c)return -10000;
+      if(board[0][2]==c&&board[1][1]==c&&board[2][0]==c)return -10000;
+      
+      
+        if(board[0][0]==d&&board[0][1]==d&&board[0][2]==d)return 20000;
+    if(board[1][0]==d&&board[1][1]==d&&board[1][2]==d)return 20000;
+     if(board[2][0]==d&&board[2][1]==d&&board[2][2]==d)return 20000;
+      if(board[0][0]==d&&board[1][0]==d&&board[2][0]==d)return 20000;
+      if(board[0][1]==d&&board[1][1]==d&&board[2][1]==d)return 20000;
+      if(board[0][2]==d&&board[1][2]==d&&board[2][2]==d)return 20000;
+      if(board[0][0]==d&&board[1][1]==d&&board[2][2]==d)return 20000;
+      if(board[0][2]==d&&board[1][1]==d&&board[2][0]==d)return 20000;
+      
+      
+      for(int i=0;i<9;i++){
+      if(board[i/3][i%3]==' ')return 0;}
+      return 1000;
     
-        case 'O':Ovalue+=vicinityEval('O',i);break;
-        case 'X':Xvalue+=vicinityEval('X',i);break;
-    }
-    if(computer==0)return Ovalue-Xvalue;
-    return Xvalue-Ovalue;
-    }
-
-    return 1;}
-
-public static int vicinityEval(char c,int i){
-    int hcount=0,vcount=0,dcount=0;
     
-try{
-    for(int j=0;j<3;j++){
-        if(board[j][i%3]==c)vcount+=3;
-        if(board[j][i%3]==' ')vcount+=1;
-        if(board[j][i%3]!=c&&board[j][i%3]!=' ')vcount=0;}
-    
-    
-}catch(Exception t){}
-if(vcount==9)return 1000000;
-try{
-for(int j=0;j<3;j++){
-        if(board[i/3][j]==c)hcount+=3;
-        if(board[i/3][j]==' ')hcount+=1;
-        if(board[i/3][j]!=' '&&board[i/3][j]!=c)hcount=0;
-}
-}catch(Exception t){}
+   }}
+  
 
-if(hcount==9)return 1000000;
 
-try{
-if(board[0][0]==c)dcount+=3;
-if(board[1][1]==c)dcount+=3;
-if(board[2][2]==c)dcount+=3;
-if(board[0][0]==' ')dcount+=1;
-if(board[1][1]==' ')dcount+=1;
-if(board[2][2]==' ')dcount+=1;
-if((board[0][0]!=' '&&board[0][0]!=c)||(board[1][1]!=' '&&board[1][1]!=c)||(board[2][2]!=' '&&board[2][2]!=c))dcount=0;
-
-}
-catch(Exception t){}
-if(dcount==9)return 100000;
-try{
-if(board[0][2]==c)dcount+=3;
-if(board[1][1]==c)dcount+=3;
-if(board[2][0]==c)dcount+=3;
-if(board[0][2]==' ')dcount+=1;
-if(board[1][1]==' ')dcount+=1;
-if(board[2][0]==' ')dcount+=1;
-if((board[0][2]!=' '&&board[0][2]!=c)||(board[1][1]!=' '&&board[1][1]!=c)||(board[2][0]!=' '&&board[2][0]!=c))dcount=0;
-}
-catch(Exception t){}
-if(dcount==9)return 100000;
-return vcount+hcount+dcount;}
-}
     
   
     
