@@ -15,7 +15,9 @@ import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.plaf.OptionPaneUI;
 import static tic.tac.to.TicTacTo.globalDepth;
 
 /**
@@ -63,10 +65,9 @@ public class PaintPane extends JPanel implements MouseListener{
     }
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(!TicTacTo.enableClick)return;
         
         
-         
+    
         
    
     
@@ -74,19 +75,15 @@ public class PaintPane extends JPanel implements MouseListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(!TicTacTo.enableClick)return;
+      
+            
         
+     if(TicTacTo.enableClick)
+     {
         
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-       
-        
-        if(!TicTacTo.enableClick)return;
-         
-        if(mutex==0){
-    if(e.getButton()==MouseEvent.BUTTON1){
+    if(e.getButton()==MouseEvent.BUTTON1&&mutex==0){
+         mutex++;
+        TicTacTo.enableClick=false;
         int x=e.getX();
         int y=e.getY();
         int fx=TicTacTo.frame.getBounds().x;
@@ -94,24 +91,99 @@ public class PaintPane extends JPanel implements MouseListener{
         int fw=TicTacTo.frame.getBounds().width;
         int fh=TicTacTo.frame.getBounds().height;
         char c=TicTacTo.player==0?'O':'X';
-        char d;
+        char d;int dialogBox;
+          Object option[]={"Play","Close"};
         if(c=='O')d='X';else d='O';
         
       
-       mutex++;
+      
         try{
+           
+            if( TicTacTo.board[(y)/(fh/3)][(x)/(fw/3)]==' '){
+            System.err.println("My Move:"+(y)/(fh/3)+" "+(x)/(fw/3)); 
+            if(TicTacTo.checkStatus()==0){
        TicTacTo.board[(y)/(fh/3)][(x)/(fw/3)]=c;
-            TicTacTo.enableClick=false;
+       display();repaint();
             
-       display();}catch(Exception t){}
-        repaint();
+             if(TicTacTo.checkStatus()<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();}
+             if(TicTacTo.checkStatus()>0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();}
+              if(TicTacTo.checkStatus()==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();}}
+            
+            else{
+            if(TicTacTo.checkStatus()>0){
+                      
+                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    }
+            if(TicTacTo.checkStatus()==1000){
+                      
+                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    }
+                    else
+                    {
+                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    
+                    }
+            
+            }
+            }
+            else
+            {TicTacTo.enableClick=true; return;}}catch(Exception t){}
+        
         try{
-      String returnMove= TicTacTo.decisionTree(globalDepth," ",-100000,100000,1,1);
-            System.err.println(returnMove);
-            int value=Integer.valueOf(returnMove.substring(1));if(value>1000)TicTacTo.frame.dispose();
-            TicTacTo.board[Integer.valueOf(returnMove.substring(0, 1))/3][Integer.valueOf(returnMove.substring(0, 1))%3]=d;
-            display();
-       repaint();
+      String returnMove= TicTacTo.decisionTree(TicTacTo.globalDepth,"",0,0,1,1-TicTacTo.player);
+      
+            System.err.println("Comp move:"+Integer.parseInt(returnMove.substring(0,1))/3+" "+Integer.parseInt(returnMove.substring(0,1))%3);
+           
+            
+            int value=Integer.valueOf(returnMove.substring(1));
+            try{
+             if(TicTacTo.checkStatus()==0){
+                 if(TicTacTo.board[Integer.valueOf(returnMove.substring(0, 1))/3][Integer.valueOf(returnMove.substring(0, 1))%3]==' ')
+           TicTacTo.board[Integer.valueOf(returnMove.substring(0, 1))/3][Integer.valueOf(returnMove.substring(0, 1))%3]=d;
+                 else{
+                 returnMove= TicTacTo.decisionTree(TicTacTo.globalDepth,"",-100000,100000,1,1-TicTacTo.player);
+                  TicTacTo.board[Integer.valueOf(returnMove.substring(0, 1))/3][Integer.valueOf(returnMove.substring(0, 1))%3]=d;
+                 }
+                 
+           
+           display();
+           repaint();
+             if(TicTacTo.checkStatus()<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();}
+             if(TicTacTo.checkStatus()>0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();}
+              if(TicTacTo.checkStatus()==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();}
+            TicTacTo.enableClick=true;
+                }
+                
+                else{
+                    if(TicTacTo.checkStatus()>0){
+                      
+                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    }
+                    
+                    if(TicTacTo.checkStatus()==1000){
+                      
+                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    }
+                    else
+                    {
+                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    
+                    }
+                    
+                }
+            }catch(Exception r){}
         
             
         }
@@ -130,28 +202,36 @@ public class PaintPane extends JPanel implements MouseListener{
 
 
         }
+     
         
-    }  for(int i=0;i<Integer.MAX_VALUE;i++){for(int j=0;j<50;j++){mutex=0;}}TicTacTo.enableClick=true;
+    } mutex=0;
     
-        }
         
+     }  
+         
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+ 
         
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if(!TicTacTo.enableClick)return;
+       
         
         
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        if(!TicTacTo.enableClick)return;
+        
         
     }
-    public void display(){
-    
+    public static void display(){
+        System.err.println("================");
     for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
         
