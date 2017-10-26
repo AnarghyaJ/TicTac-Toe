@@ -26,9 +26,9 @@ import static tic.tac.to.TicTacTo.globalDepth;
  */
 public class PaintPane extends JPanel implements MouseListener{
 
-    static int mutex=0;
+    static int mutex=0;static int Ocount=0;
     public void paintComponent(Graphics g1){
-        
+       
     this.addMouseListener(this);
         Graphics2D g=(Graphics2D)g1;
         super.paintComponent(g);
@@ -72,6 +72,16 @@ public class PaintPane extends JPanel implements MouseListener{
    
     
     }
+public void preprocess(){
+
+char [][] board=TicTacTo.board;
+char c=TicTacTo.player==1?'X':'O';
+char d=c=='O'?'X':'O';
+if(board[0][0]==c||board[0][2]==c||board[2][0]==c||board[2][2]==c)
+    TicTacTo.board[1][1]=d;
+if(board[1][1]==c)TicTacTo.board[0][2]=d;
+
+}
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -82,6 +92,8 @@ public class PaintPane extends JPanel implements MouseListener{
      {
         
     if(e.getButton()==MouseEvent.BUTTON1&&mutex==0){
+        
+        
          mutex++;
         TicTacTo.enableClick=false;
         int x=e.getX();
@@ -97,28 +109,28 @@ public class PaintPane extends JPanel implements MouseListener{
         
       
       
-        try{
-           
+       
+           int myMove=(y)/(fh/3)*3+(x)/(fw/3);
             if( TicTacTo.board[(y)/(fh/3)][(x)/(fw/3)]==' '){
             System.err.println("My Move:"+(y)/(fh/3)+" "+(x)/(fw/3)); 
-            if(TicTacTo.checkStatus()==0){
+            if(TicTacTo.checkStatus(1)==0){
        TicTacTo.board[(y)/(fh/3)][(x)/(fw/3)]=c;
        display();repaint();
             
-             if(TicTacTo.checkStatus()<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+             if(TicTacTo.checkStatus(1)<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();}
-             if(TicTacTo.checkStatus()>0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+             if(TicTacTo.checkStatus(1)>1000){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();}
-              if(TicTacTo.checkStatus()==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+              if(TicTacTo.checkStatus(1)==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();}}
             
             else{
-            if(TicTacTo.checkStatus()>0){
+            if(TicTacTo.checkStatus(1)>1000){
                       
                      dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();
                     }
-            if(TicTacTo.checkStatus()==1000){
+            if(TicTacTo.checkStatus(1)==1000){
                       
                      dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();
@@ -133,17 +145,24 @@ public class PaintPane extends JPanel implements MouseListener{
             }
             }
             else
-            {TicTacTo.enableClick=true; return;}}catch(Exception t){}
+            {TicTacTo.enableClick=true; return;}
         
         try{
-      String returnMove= TicTacTo.decisionTree(TicTacTo.globalDepth,"",0,0,1,1-TicTacTo.player);
-      
+            
+            
+      String returnMove;
+         
+     if(Ocount==0&&TicTacTo.player==0){preprocess();TicTacTo.enableClick=true;TicTacTo.globalDepth=3;Ocount++;}
+      else{
+         returnMove= TicTacTo.decisionTree(TicTacTo.globalDepth,"",Integer.MIN_VALUE,Integer.MAX_VALUE,1,1-TicTacTo.player);
+         
+          //  System.out.println("Return Move:"+returnMove);
             System.err.println("Comp move:"+Integer.parseInt(returnMove.substring(0,1))/3+" "+Integer.parseInt(returnMove.substring(0,1))%3);
            
             
             int value=Integer.valueOf(returnMove.substring(1));
             try{
-             if(TicTacTo.checkStatus()==0){
+             if(TicTacTo.checkStatus(1)==0){
                  if(TicTacTo.board[Integer.valueOf(returnMove.substring(0, 1))/3][Integer.valueOf(returnMove.substring(0, 1))%3]==' ')
            TicTacTo.board[Integer.valueOf(returnMove.substring(0, 1))/3][Integer.valueOf(returnMove.substring(0, 1))%3]=d;
                  else{
@@ -154,23 +173,23 @@ public class PaintPane extends JPanel implements MouseListener{
            
            display();
            repaint();
-             if(TicTacTo.checkStatus()<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+             if(TicTacTo.checkStatus(1)<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();}
-             if(TicTacTo.checkStatus()>0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+             if(TicTacTo.checkStatus(1)>1000){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();}
-              if(TicTacTo.checkStatus()==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+              if(TicTacTo.checkStatus(1)==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();}
             TicTacTo.enableClick=true;
                 }
                 
                 else{
-                    if(TicTacTo.checkStatus()>0){
+                    if(TicTacTo.checkStatus(1)>1000){
                       
                      dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();
                     }
                     
-                    if(TicTacTo.checkStatus()==1000){
+                    if(TicTacTo.checkStatus(1)==1000){
                       
                      dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
                     if(dialogBox==1)TicTacTo.frame.dispose();
@@ -184,9 +203,9 @@ public class PaintPane extends JPanel implements MouseListener{
                     
                 }
             }catch(Exception r){}
+     }
+      } 
         
-            
-        }
         catch(ArrayIndexOutOfBoundsException t){
             if(y/(fh/3)==3) 
                 if(x/(fw/3)==3)
