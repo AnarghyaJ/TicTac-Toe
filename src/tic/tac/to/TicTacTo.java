@@ -19,12 +19,13 @@ import javax.swing.JPanel;
  * @author Anarghya
  */
 public class TicTacTo extends JFrame{
-    static int globalDepth=6;
+    static int globalDepth=6;//look ahead moves
  
     static JFrame frame;
     static int player=-1;
     private Graphics g;
     static char board[][]={{' ',' ',' '},{' ',' ',' '},{' ',' ',' '}};
+    
     public static boolean enableClick=false;//more on this later!
     /**
      * @param args the command line arguments
@@ -37,10 +38,10 @@ public class TicTacTo extends JFrame{
     }
     
     public  TicTacTo(){
+       
      frame=new JFrame("Play Tic Tac Toe!");
-   // frame.setLayout(null);
-   frame.setAlwaysOnTop(true);
-   String bestMove = "";
+frame.setAlwaysOnTop(true);
+  String bestMove = "";
    frame.setBounds(200, 100, 700, 600);
     frame.setVisible(true);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -68,7 +69,7 @@ public class TicTacTo extends JFrame{
     
     }}
     
-    
+ 
     public static String decisionTree(int depth,String move,int alpha,int beta,int node,int player){
     
      int value;
@@ -127,23 +128,23 @@ public class TicTacTo extends JFrame{
    char c=player==0?'O':'X';
    if(depth==0)depth=1;
    char d=c=='O'?'X':'O';
-   if(board[0][0]==c&&board[0][1]==c&&board[0][2]==c)return -10000*depth;
-    if(board[1][0]==c&&board[1][1]==c&&board[1][2]==c)return -10000*depth;
-     if(board[2][0]==c&&board[2][1]==c&&board[2][2]==c)return -10000*depth;
-      if(board[0][0]==c&&board[1][0]==c&&board[2][0]==c)return -10000*depth;
-      if(board[0][1]==c&&board[1][1]==c&&board[2][1]==c)return -10000*depth;
-      if(board[0][2]==c&&board[1][2]==c&&board[2][2]==c)return -10000*depth;
-      if(board[0][0]==c&&board[1][1]==c&&board[2][2]==c)return -10000*depth;
-      if(board[0][2]==c&&board[1][1]==c&&board[2][0]==c)return -10000*depth;
+   if(board[0][0]==c&&board[0][1]==c&&board[0][2]==c)return -10000-depth;
+    if(board[1][0]==c&&board[1][1]==c&&board[1][2]==c)return -10000-depth;
+     if(board[2][0]==c&&board[2][1]==c&&board[2][2]==c)return -10000-depth;
+      if(board[0][0]==c&&board[1][0]==c&&board[2][0]==c)return -10000-depth;
+      if(board[0][1]==c&&board[1][1]==c&&board[2][1]==c)return -10000-depth;
+      if(board[0][2]==c&&board[1][2]==c&&board[2][2]==c)return -10000-depth;
+      if(board[0][0]==c&&board[1][1]==c&&board[2][2]==c)return -10000-depth;
+      if(board[0][2]==c&&board[1][1]==c&&board[2][0]==c)return -10000-depth;
       
       
-        if(board[0][0]==d&&board[0][1]==d&&board[0][2]==d)return 10000/depth;
-    if(board[1][0]==d&&board[1][1]==d&&board[1][2]==d)return 10000/depth;
-     if(board[2][0]==d&&board[2][1]==d&&board[2][2]==d)return 10000/depth;
-      if(board[0][0]==d&&board[1][0]==d&&board[2][0]==d)return 10000/depth;
-      if(board[0][1]==d&&board[1][1]==d&&board[2][1]==d)return 10000/depth;
-      if(board[0][2]==d&&board[1][2]==d&&board[2][2]==d)return 10000/depth;
-      if(board[0][0]==d&&board[1][1]==d&&board[2][2]==d)return 10000/depth;
+        if(board[0][0]==d&&board[0][1]==d&&board[0][2]==d)return 10000+depth;
+    if(board[1][0]==d&&board[1][1]==d&&board[1][2]==d)return 10000+depth;
+     if(board[2][0]==d&&board[2][1]==d&&board[2][2]==d)return 10000+depth;
+      if(board[0][0]==d&&board[1][0]==d&&board[2][0]==d)return 10000+depth;
+      if(board[0][1]==d&&board[1][1]==d&&board[2][1]==d)return 10000+depth;
+      if(board[0][2]==d&&board[1][2]==d&&board[2][2]==d)return 10000+depth;
+      if(board[0][0]==d&&board[1][1]==d&&board[2][2]==d)return 10000+depth;
       
       
       for(int i=0;i<9;i++){
