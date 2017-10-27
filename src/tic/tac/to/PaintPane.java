@@ -25,7 +25,7 @@ import static tic.tac.to.TicTacTo.globalDepth;
  * @author Anarghya
  */
 public class PaintPane extends JPanel implements MouseListener{
-
+    static int DRAW=1000;
     static int mutex=0;static int Ocount=0;
     public void paintComponent(Graphics g1){
        
@@ -117,33 +117,14 @@ if(board[1][1]==c)TicTacTo.board[0][2]=d;
        TicTacTo.board[(y)/(fh/3)][(x)/(fw/3)]=c;
        display();repaint();
             
-             if(TicTacTo.checkStatus(1)<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();}
-             if(TicTacTo.checkStatus(1)>1000){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();}
-              if(TicTacTo.checkStatus(1)==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();}}
+            displayMessage();
+            }
             
             else{
-            if(TicTacTo.checkStatus(1)>1000){
-                      
-                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();
-                    }
-            if(TicTacTo.checkStatus(1)==1000){
-                      
-                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();
-                    }
-                    else
-                    {
-                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();
-                    
-                    }
+         displayMessage();
+            }
+            }
             
-            }
-            }
             else
             {TicTacTo.enableClick=true; return;}
         
@@ -173,33 +154,12 @@ if(board[1][1]==c)TicTacTo.board[0][2]=d;
            
            display();
            repaint();
-             if(TicTacTo.checkStatus(1)<0){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();}
-             if(TicTacTo.checkStatus(1)>1000){dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();}
-              if(TicTacTo.checkStatus(1)==1000){ dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();}
+             displayMessage();
             TicTacTo.enableClick=true;
                 }
                 
                 else{
-                    if(TicTacTo.checkStatus(1)>1000){
-                      
-                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();
-                    }
-                    
-                    if(TicTacTo.checkStatus(1)==1000){
-                      
-                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();
-                    }
-                    else
-                    {
-                     dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
-                    if(dialogBox==1)TicTacTo.frame.dispose();
-                    
-                    }
+                    displayMessage();
                     
                 }
             }catch(Exception r){}
@@ -249,6 +209,8 @@ if(board[1][1]==c)TicTacTo.board[0][2]=d;
         
         
     }
+    
+   
     public static void display(){
         System.err.println("================");
     for(int i=0;i<3;i++){
@@ -259,5 +221,37 @@ if(board[1][1]==c)TicTacTo.board[0][2]=d;
     
         System.out.print("\n");}
     }
+
+    private void displayMessage() {
+        int dialogBox;
+            
+          Object option[]={"Play","Close"};
+          int status=TicTacTo.checkStatus(1);
+          if(status==DRAW){
+          dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "Draw!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    else
+                    {
+                    TicTacTo.frame.dispose();
+                    new TicTacTo();
+                    }
+          }
+          if(status>DRAW){
+          dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Won!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    else{TicTacTo.frame.dispose();
+                    new TicTacTo();
+                    }
+          }
+          if(status<0)
+          {dialogBox=JOptionPane.showOptionDialog(TicTacTo.frame, "Match Ended!", "You Lost!",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,option,option[0]);
+                    if(dialogBox==1)TicTacTo.frame.dispose();
+                    else{TicTacTo.frame.dispose();
+                    new TicTacTo();
+                    }
+          
+          }
+    }
     
 }
+
